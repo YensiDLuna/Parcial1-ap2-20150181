@@ -1,6 +1,7 @@
 ﻿@page "/R_Producto"
+@page "/R_Productos/{ProductoId:int}"
 @inject IToastService toast
-<EditForm Model="productos"  OnValidSubmit="Guardar">
+<EditForm Model="productos" OnValidSubmit="Guardar">
     <DataAnnotationsValidator />
 
     <div class="row d-flex justify-content-center">
@@ -67,7 +68,7 @@
                                 <i class="oi oi-clipboard mr-2">Guardar</i>
                             </button>
 
-                            <button class="col btn btn-danger mx-2 my-2" type="button " @onclick="Eliminar">
+                            <button class="col btn btn-danger mx-2 my-2" type="button" @onclick="Eliminar">
                                 <i class="oi oi-trash mr-2">Eliminar</i>
                             </button>
                         </div>
@@ -96,9 +97,12 @@
         var encontrado = ProductoBLL.Buscar(productos.ProductoId);
 
         if (encontrado != null)
+        {
             this.productos = encontrado;
+            toast.ShowSuccess("Producto encontrado");
+        }
         else
-            toast.ShowWarning("Préstamo no encontrado");
+            toast.ShowWarning("Producto no encontrado");
     }
 
     public void Guardar()
@@ -108,10 +112,10 @@
         if (guardado)
         {
             Nuevo();
-            toast.ShowSuccess("Prestamo guardado correctamente");
+            toast.ShowSuccess("Producto guardado correctamente");
         }
         else
-            toast.ShowError("No se pudo guardar el Préstamo");
+            toast.ShowError("No se pudo guardar el Producto");
     }
 
     public void Eliminar()
@@ -121,9 +125,9 @@
         if (eliminado)
         {
             Nuevo();
-            toast.ShowSuccess("Préstamo eliminado correctamente");
+            toast.ShowSuccess("Producto eliminado correctamente");
         }
         else
-            toast.ShowError("No se pudo eliminar el Préstamo");
+            toast.ShowError("No se pudo eliminar el Producto");
     }
 }

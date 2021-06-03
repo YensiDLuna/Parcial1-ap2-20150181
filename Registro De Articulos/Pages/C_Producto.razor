@@ -1,0 +1,148 @@
+﻿@page "/C_Producto"
+@inject IToastService toast
+@inject NavigationManager Nav
+@inject IJSRuntime Confirmacion
+<div class="row d-flex justify-content-center">
+
+    <div class="col-11">
+
+        <div class="card mt-1">
+
+            <div class="card-header">
+                <h3>Consulta de Producto</h3>
+            </div>
+
+            <div class="card-body">
+                <form>
+
+
+                    <div class="input-group my-2">
+                        <select class="form-control col-3" @bind="Filtro" style="width:150px;">
+                            <option value="0">Todos</option>
+                            <option value="1">Producto ID</option>
+                            <option value="2">Descripcion</option>
+                            <option value="3">Existencia</option>
+
+                        </select>
+                        <input type="text" class="form-control" @bind="Criterio" placeholder="Criterio" />
+                        <button class="btn btn-primary" type="button" @onclick="Buscar"> <i class="oi oi-magnifying-glass mr-2">Buscar</i></button>
+                    </div>
+
+                    <table class="table mt-4">
+                        <thead>
+                            <tr>
+                                <th>Producto ID</th>
+                                <th>Descripcion</th>
+                                <th>Existencia</th>
+                                <th>Costo</th>
+                                <th>Valor De Iventario</th>
+                                <th>Accion</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in productos)
+                            {
+                                <tr>
+                                    <th>@item.ProductoId</th>
+                                    <td>@item.Descripcion</td>
+                                    <td>@item.Existencia</td>
+                                    <td>@item.Costo</td>
+                                    <td>@item.ValorInventario</td>
+                                    <td>
+                                        <button @onclick="() => Editar(item.ProductoId)" class="btn btn-primary oi oi-pencil"></button>
+                                        <button @onclick="() => Eliminar(item.ProductoId)" class="btn btn-danger oi oi-trash"></button>
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    public List<Productos> productos { get; set; }
+    public string Filtro { get; set; }
+    public string Criterio { get; set; }
+
+
+    protected override void OnInitialized()
+    {
+        Nuevo();
+    }
+
+    private void Nuevo()
+    {
+        productos = new List<Productos>();
+        Filtro = "0";
+        Criterio = string.Empty;
+    }
+
+    private void Buscar()
+    {
+        productos = new List<Productos>();
+
+
+
+        if (Criterio.Length > 0)
+        {
+            switch (Filtro)
+            {
+                case "0":
+                    productos = ProductoBLL.GetList(p => true);
+
+                    break;
+                case "1":
+                    productos = ProductoBLL.GetList(e => e.ProductoId == Convert.ToInt32(Criterio));
+                    break;
+                case "2":
+                    productos = ProductoBLL.GetList(e => e.Descripcion == Criterio);
+                    break;
+                case "3":
+                    productos = ProductoBLL.GetList(e => e.Existencia == Convert.ToDecimal(Criterio));
+                    break;
+
+            }
+        }
+        else
+        {
+            productos = ProductoBLL.GetList(p => true);
+        }
+
+
+    }
+    void Editar(int id)
+    {
+        Nav.NavigateTo($"R_Producto/{id}");
+    }
+
+
+    async Task Eliminar(int id)
+    {
+        Nav.ToAbsoluteUri($"R_Producto/{id}");
+
+        bool confirmed = await Confirmacion.InvokeAsync<bool>("confirm", "Estas seguro de que deseas eliminar este Producto?");
+        if (confirmed)
+        {
+            bool eliminado;
+            eliminado = ProductoBLL.Eliminar(id);
+
+            if (eliminado)
+            {
+               
+                toast.ShowSuccess("Registro Eliminado exitosamente.");
+            }
+            else
+                toast.ShowError("No fue posible Eliminar este Registro.");
+            return;
+        }
+        return;
+    }
+}

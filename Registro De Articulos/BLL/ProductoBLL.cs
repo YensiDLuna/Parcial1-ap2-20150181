@@ -11,7 +11,7 @@ namespace Registro_De_Articulos.BLL
 {
     public class ProductoBLL
     {
-        private static object productos;
+      
 
 
         public static bool Guardar(Productos productos)
@@ -99,11 +99,11 @@ namespace Registro_De_Articulos.BLL
             try
             {
 
-                var Productos = contexto.Producto.Find(id);
+                var productos = contexto.Producto.Find(id);
 
                 if (productos != null)
                 {
-                    contexto.Producto.Remove(Productos);
+                    contexto.Producto.Remove(productos);
                     paso = contexto.SaveChanges() > 0;
                 }
             }
