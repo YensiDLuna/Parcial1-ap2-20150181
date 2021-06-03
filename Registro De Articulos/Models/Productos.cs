@@ -13,7 +13,7 @@ namespace Registro_De_Articulos.Models
         [Required(ErrorMessage = "Ingrese una Descripcion")]
         public string Descripcion { get; set; }
         [Required(ErrorMessage = "Ingrese una exitencia ")]
-        public int Existencia { get; set; }
+        public decimal Existencia { get; set; }
         [Required(ErrorMessage = "Ingrese un Costo")]
         public decimal Costo { get; set; }
 
